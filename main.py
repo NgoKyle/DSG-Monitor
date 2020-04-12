@@ -12,6 +12,7 @@ from discord_webhook import DiscordWebhook
 links = []
 skus = []
 names = []
+count = []
 
 #get SKUs, Products name from URL
 with open('links.txt','r') as f:
@@ -30,11 +31,9 @@ with open('links.txt','r') as f:
         except:
             continue
 
-for i in range(len(links)):
-    print(names[i], skus[i], "\n " + links[i])
-
 def main():
     for i in range(len(links)):
+        count.append(0)
         p1 = multiprocessing.Process(target=worker, args=(i,))
         p1.start()
 
@@ -42,10 +41,20 @@ def worker(i):
     while True:
         start_time = time.time()
         ats = checkOnlineInventory(names[i], skus[i], links[i])
-        if(int(ats) > 0 and checkFrontEnd(links[i])):
-            message = time.strftime('%a %H:%M:%S') + "\tItem: {}\navailable to ship: {}\n{}".format(names[i], ats, links[i])
-            discord.sendDiscord(message, 'online', skus[i], 'version1')
-        print(time.strftime('%a %H:%M:%S') + "\t" + names[i] + "--- %s seconds ---" % (time.time() - start_time))
+        if(int(ats) > 0):
+            if checkFrontEnd(links[i]):
+                message = time.strftime('%a %H:%M:%S') + "\n{}\nAvailable to ship: {}\n{}".format(names[i], ats, links[i])
+                if int(count[i]) == 2:
+                    discord.sendDiscord(message, 'online', skus[i], 'version2')
+                elif int(count[i]) == 3:
+                    discord.sendDiscord(message, 'online', skus[i], 'version3')
+                elif int(count[i]) == 4:
+                    discord.sendDiscord(message, 'online', skus[i], 'version4')
+                count[i] = count[i] + 1
+            else:
+                count[i] = 0
+
+        print(time.strftime('%a %H:%M:%S') + "\t" + names[i] + "\tcount:" + str(count[i]) + "\t--- %s seconds ---" % (time.time() - start_time))
 
 def checkOnlineInventory(name, sku, link):
     try:

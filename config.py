@@ -1,8 +1,8 @@
 from discord_webhook import DiscordWebhook
 
 proxy = {
-  "http": "http://108.59.14.203:13080",
-  "https": "http://108.59.14.203:13080"
+  "http": "http://108.59.14.203:13010",
+  "https": "http://108.59.14.203:13010"
 }
 
 header = {
