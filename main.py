@@ -58,8 +58,16 @@ def worker(i):
 
 def checkOnlineInventory(name, sku, link):
     try:
-        r = requests.get('https://availability.dickssportinggoods.com/v1/inventoryapis/searchinventory?location=0&sku={}'.format(sku),
-            headers=config.header, proxies=config.proxy).json()
+        tempHeaders = config.header
+        tempHeaders['referer'] = link
+
+        proxy = {
+          "http": "http://108.59.14.203:13010",
+          "https": "http://108.59.14.203:13010",
+        }
+
+        url = 'https://availability.dickssportinggoods.com/v1/inventoryapis/searchinventory?location=0&sku={}'.format(sku)
+        r = requests.get(url, proxies=proxy, headers=tempHeaders ).json()
     except:
         return checkOnlineInventory(name, sku, link)
 
